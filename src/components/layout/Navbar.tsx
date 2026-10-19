@@ -1,15 +1,28 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Menu, Search, ShoppingBag, User, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { ShoppingCart, User, Menu, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import classes from './Navbar.module.css';
-import CartDrawer from '../shop/CartDrawer';
 import { useCart } from '../../context/CartContext';
 import { BRAND } from '../../constants/brand';
+import CartDrawer from '../shop/CartDrawer';
+import classes from './Navbar.module.css';
+
+const NAV_LINKS = [
+    { to: '/shop', label: 'Shop' },
+    { to: '/about', label: 'Our Story' },
+    { to: '/contact', label: 'Contact' },
+    { to: '/faq', label: 'FAQ' },
+];
+
+const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+    isActive ? `${classes.navLink} ${classes.active}` : classes.navLink;
+
+const mobileLinkClass = ({ isActive }: { isActive: boolean }) =>
+    isActive ? `${classes.mobileLink} ${classes.mobileLinkActive}` : classes.mobileLink;
 
 const Navbar = () => {
     const { logout, isAuthenticated } = useAuth();
-    const { items } = useCart();
+    const { itemCount } = useCart();
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isCartOpen, setIsCartOpen] = useState(false);
@@ -20,110 +33,105 @@ const Navbar = () => {
         return () => window.removeEventListener('open-cart', handleOpenCart);
     }, []);
 
+    const closeMenu = () => setIsMenuOpen(false);
+
     const handleLogout = () => {
         logout();
+        closeMenu();
         navigate('/');
     };
 
     return (
-        <nav className={classes.navbar}>
-            <div className={`container ${classes.navContainer}`}>
-                <Link to="/" className={classes.logo}>
+        <header className={classes.header}>
+            <div className={`container ${classes.bar}`}>
+                <Link to="/" className={classes.logo} onClick={closeMenu}>
                     {BRAND.NAME}
                 </Link>
 
-                {/* Desktop Nav */}
-                <div className={classes.desktopNav}>
-                    <Link to="/shop" className={classes.navLink}>Shop</Link>
-                    {!isAuthenticated && (
-                        <>
-                            <Link to="/contact" className={classes.navLink}>Contact</Link>
-                            <Link to="/faq" className={classes.navLink}>FAQ</Link>
-                        </>
-                    )}
-                </div>
+                <nav aria-label="Main" className={classes.desktopNav}>
+                    {NAV_LINKS.map(link => (
+                        <NavLink key={link.to} to={link.to} className={navLinkClass}>{link.label}</NavLink>
+                    ))}
+                </nav>
 
                 <div className={classes.actions}>
-                    {isAuthenticated && (
-                        <button
-                            onClick={() => setIsCartOpen(true)}
-                            className={classes.iconBtn}
-                            style={{
-                                position: 'relative',
-                                opacity: items.length === 0 ? 0.6 : 1,
-                                cursor: items.length === 0 ? 'default' : 'pointer'
-                            }}
-                            title={items.length === 0 ? "Your cart is empty" : "View Cart"}
-                        >
-                            <ShoppingCart size={20} />
-                            {items.length > 0 && (
-                                <span style={{
-                                    position: 'absolute',
-                                    top: '-5px',
-                                    right: '-5px',
-                                    background: 'var(--color-accent)',
-                                    color: 'white',
-                                    borderRadius: '50%',
-                                    width: '18px',
-                                    height: '18px',
-                                    fontSize: '0.7rem',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    fontWeight: 'bold'
-                                }}>
-                                    {items.length}
-                                </span>
-                            )}
-                        </button>
+                    {/* TODO: no search feature exists yet; links to the full catalogue for now. */}
+                    <Link to="/shop" className={classes.iconBtn} aria-label="Browse all candles">
+                        <Search size={18} aria-hidden="true" />
+                    </Link>
+
+                    {isAuthenticated ? (
+                        <>
+                            <Link to="/dashboard" className={`${classes.iconBtn} ${classes.desktopOnly}`} aria-label="Your account">
+                                <User size={18} aria-hidden="true" />
+                            </Link>
+                            <button type="button" onClick={handleLogout} className={`${classes.textAction} ${classes.desktopOnly}`}>
+                                Log out
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <Link to="/login" className={`${classes.textAction} ${classes.desktopOnly}`}>Log in</Link>
+                            <Link to="/register" className={`${classes.signUp} ${classes.desktopOnly}`}>Sign up</Link>
+                        </>
                     )}
 
                     {isAuthenticated ? (
-                        <div className={classes.userMenu}>
-                            <Link to="/dashboard" className={classes.iconBtn} title="Dashboard">
-                                <User size={20} />
-                            </Link>
-                            <button onClick={handleLogout} className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem' }}>
-                                Logout
-                            </button>
-                        </div>
+                        <button
+                            type="button"
+                            className={classes.iconBtn}
+                            onClick={() => setIsCartOpen(true)}
+                            aria-label={`Open bag, ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`}
+                        >
+                            <ShoppingBag size={18} aria-hidden="true" />
+                            {itemCount > 0 && <span className={classes.badge} aria-hidden="true">{itemCount}</span>}
+                        </button>
                     ) : (
-                        <div className={classes.authLinks}>
-                            <Link to="/login" className={classes.navLink}>Login</Link>
-                            <Link to="/register" className="btn btn-primary">Sign Up</Link>
-                        </div>
+                        <Link to="/login" className={classes.iconBtn} aria-label="Log in to view your bag">
+                            <ShoppingBag size={18} aria-hidden="true" />
+                        </Link>
                     )}
 
-                    <button className={classes.mobileToggle} onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                        {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                    <button
+                        type="button"
+                        className={`${classes.iconBtn} ${classes.menuToggle}`}
+                        onClick={() => setIsMenuOpen(open => !open)}
+                        aria-expanded={isMenuOpen}
+                        aria-controls="mobile-menu"
+                        aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+                    >
+                        {isMenuOpen ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}
                     </button>
                 </div>
             </div>
 
-            {/* <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} /> */}
+            {isMenuOpen && (
+                <nav id="mobile-menu" aria-label="Mobile" className={classes.mobileMenu}>
+                    <div className="container">
+                        {NAV_LINKS.map(link => (
+                            <NavLink key={link.to} to={link.to} className={mobileLinkClass} onClick={closeMenu}>{link.label}</NavLink>
+                        ))}
+                        <div className={classes.mobileActions}>
+                            {isAuthenticated ? (
+                                <>
+                                    <Link to="/dashboard" className="pill-btn pill-btn-outline" onClick={closeMenu}>Your account</Link>
+                                    <button type="button" className="pill-btn pill-btn-primary" onClick={handleLogout}>Log out</button>
+                                </>
+                            ) : (
+                                <>
+                                    <Link to="/login" className="pill-btn pill-btn-outline" onClick={closeMenu}>Log in</Link>
+                                    <Link to="/register" className="pill-btn pill-btn-primary" onClick={closeMenu}>Sign up</Link>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </nav>
+            )}
+
             {isAuthenticated && (
                 <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
             )}
-
-            {/* Mobile Menu */}
-            {isMenuOpen && (
-                <div className={classes.mobileMenu}>
-                    <Link to="/shop" onClick={() => setIsMenuOpen(false)}>Shop</Link>
-                    {!isAuthenticated && (
-                        <>
-                            <Link to="/contact" onClick={() => setIsMenuOpen(false)}>Contact</Link>
-                            <Link to="/faq" onClick={() => setIsMenuOpen(false)}>FAQ</Link>
-                        </>
-                    )}
-                    {!isAuthenticated && (
-                        <>
-                            <Link to="/login" onClick={() => setIsMenuOpen(false)}>Login</Link>
-                            <Link to="/register" onClick={() => setIsMenuOpen(false)}>Register</Link>
-                        </>
-                    )}
-                </div>
-            )}
-        </nav>
+        </header>
     );
 };
 

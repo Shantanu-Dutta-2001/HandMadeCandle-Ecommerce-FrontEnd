@@ -1,0 +1,22 @@
+.bar {
+    background: var(--cocoa);
+    color: var(--ivory);
+    font-size: 12.5px;
+    letter-spacing: 0.04em;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.bar a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color var(--ease-color);
+}
+
+.bar a:hover {
+    color: var(--cream);
+}
+
+.bar a:focus-visible {
+    outline-color: var(--ivory);
+}

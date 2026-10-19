@@ -1,0 +1,22 @@
+.dismiss {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--ivory);
+    transition: background-color var(--ease-color);
+}
+
+.dismiss:hover {
+    background: rgba(250, 247, 240, 0.12);
+}
+
+.dismiss:focus-visible {
+    outline-color: var(--ivory);
+    outline-offset: 1px;
+}

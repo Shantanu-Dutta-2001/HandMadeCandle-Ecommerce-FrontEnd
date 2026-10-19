@@ -27,7 +27,8 @@ import NotFound from './pages/NotFound';
 
 import { useAuth } from './context/AuthContext';
 import DashboardLayout from './components/layout/DashboardLayout';
-import { Toaster } from 'react-hot-toast';
+import AnnouncementBar from './components/layout/AnnouncementBar';
+import AppToaster from './components/ui/AppToaster';
 
 const PublicLayout = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuth();
@@ -38,6 +39,7 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <AnnouncementBar />
       <Navbar />
       <main style={{ flex: 1 }}>
         {children}
@@ -52,22 +54,7 @@ function App() {
     <AuthProvider>
       <CartProvider>
         <Router>
-          <Toaster
-            position="top-right"
-            toastOptions={{
-              duration: 3000,
-              style: {
-                background: '#1a1a1a',
-                color: '#f5f5dc',
-                border: '1px solid #D4A017',
-                borderRadius: '12px',
-                padding: '16px 20px',
-                fontSize: '14px',
-                fontWeight: '500',
-                boxShadow: '0 8px 24px rgba(212, 160, 23, 0.15)',
-              },
-            }}
-          />
+          <AppToaster />
           <Routes>
             {/* Public Routes with Navbar/Footer */}
             <Route element={<PublicLayout><Outlet /></PublicLayout>}>
