@@ -6,6 +6,7 @@ import classes from '../../styles/components/Dashboard.module.css';
 import { jsPDF } from 'jspdf';
 import { ArrowLeft, Download, Package } from 'lucide-react';
 import OrderFeedbackForm from '../../components/dashboard/OrderFeedbackForm';
+import { BRAND } from '../../constants/brand';
 
 const OrderDetail = () => {
     const { id } = useParams();
@@ -43,11 +44,11 @@ const OrderDetail = () => {
         doc.setTextColor('#ffffff');
         doc.setFontSize(24);
         doc.setFont('times', 'bold');
-        doc.text('CANDLE.', 20, 25);
+        doc.text(BRAND.NAME, 20, 25);
 
         doc.setFontSize(10);
         doc.setFont('helvetica', 'normal');
-        doc.text('Exquisite Handcrafted Candles', 20, 32);
+        doc.text(BRAND.TAGLINE, 20, 32);
 
         // Header Info
         doc.setTextColor('#ffffff');
@@ -125,7 +126,7 @@ const OrderDetail = () => {
         doc.setFontSize(9);
         doc.setFont('helvetica', 'italic');
         doc.text('Thank you for your purchase!', 105, 280, { align: 'center' });
-        doc.text('Visit us again at www.candle.com', 105, 285, { align: 'center' });
+        doc.text(`${BRAND.NAME} · ${BRAND.TAGLINE}`, 105, 285, { align: 'center' });
 
         doc.save(`receipt-${order.id}.pdf`);
     };

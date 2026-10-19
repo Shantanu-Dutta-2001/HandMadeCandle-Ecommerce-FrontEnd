@@ -1,12 +1,13 @@
 import classes from './Footer.module.css';
+import { BRAND } from '../../constants/brand';
 
 const Footer = () => {
     return (
         <footer className={classes.footer}>
             <div className={`container ${classes.container}`}>
                 <div className={classes.column}>
-                    <h3>CANDLE.</h3>
-                    <p>Handcrafted scents for your home.</p>
+                    <h3>{BRAND.NAME}</h3>
+                    <p>{BRAND.TAGLINE}</p>
                 </div>
                 <div className={classes.column}>
                     <h4>Links</h4>
@@ -22,7 +23,7 @@ const Footer = () => {
                 </div>
             </div>
             <div className={`container ${classes.copyright}`}>
-                © 2025 Candle Custom. All rights reserved.
+                © {new Date().getFullYear()} {BRAND.NAME}. All rights reserved.
             </div>
         </footer>
     );

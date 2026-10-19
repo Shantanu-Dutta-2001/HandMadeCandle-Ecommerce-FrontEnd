@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { messageService } from '../../services/message.service';
 import classes from '../../styles/components/Contact.module.css';
+import { BRAND } from '../../constants/brand';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -62,11 +63,11 @@ const Contact = () => {
 
                     <div className={classes.detailItem}>
                         <h3>Email</h3>
-                        <p>hello@candlecustom.com</p>
+                        <p><a href={`mailto:${BRAND.EMAIL}`}>{BRAND.EMAIL}</a></p>
                     </div>
                     <div className={classes.detailItem}>
                         <h3>Address</h3>
-                        <p>123 Wax Way, Candle City, CC 12345</p>
+                        <p>{BRAND.ADDRESS}</p>
                     </div>
                 </div>
 

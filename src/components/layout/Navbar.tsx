@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import classes from './Navbar.module.css';
 import CartDrawer from '../shop/CartDrawer';
 import { useCart } from '../../context/CartContext';
+import { BRAND } from '../../constants/brand';
 
 const Navbar = () => {
     const { logout, isAuthenticated } = useAuth();
@@ -28,7 +29,7 @@ const Navbar = () => {
         <nav className={classes.navbar}>
             <div className={`container ${classes.navContainer}`}>
                 <Link to="/" className={classes.logo}>
-                    CANDLE.
+                    {BRAND.NAME}
                 </Link>
 
                 {/* Desktop Nav */}

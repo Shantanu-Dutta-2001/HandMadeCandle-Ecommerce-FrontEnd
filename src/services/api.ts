@@ -39,4 +39,10 @@ api.interceptors.response.use(
     }
 );
 
+export const getList = async <T>(url: string): Promise<T[]> => {
+    const { data } = await api.get(url);
+    if (!Array.isArray(data)) throw new Error(`Expected a list from ${url}`);
+    return data;
+};
+
 export default api;
