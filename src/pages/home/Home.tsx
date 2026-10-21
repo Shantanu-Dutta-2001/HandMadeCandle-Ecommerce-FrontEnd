@@ -221,7 +221,7 @@ const Home = () => {
                     <div className={classes.contactCopy}>
                         <p className="eyebrow">Get in touch</p>
                         <h2 className={`display-2 ${classes.sectionTitle}`}>
-                            Let's create something <em>beautiful</em>
+                            Let’s create something <em>beautiful</em>
                         </h2>
                         <p className="body-copy">
                             Planning a celebration, a gift for many, or simply want to say hello? Write to us — we read every message.

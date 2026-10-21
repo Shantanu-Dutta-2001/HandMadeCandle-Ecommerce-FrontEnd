@@ -15,6 +15,17 @@
     color: var(--cocoa);
 }
 
+.note {
+    margin: -20px 0 28px;
+    font-size: 13.5px;
+    color: var(--text-soft);
+}
+
+.input::placeholder {
+    color: var(--text-soft);
+    opacity: 0.75;
+}
+
 .form {
     display: grid;
     gap: 22px;
@@ -67,6 +78,39 @@
 
 .input[aria-invalid='true'] {
     border-color: var(--error-border);
+}
+
+.authForm {
+    margin-top: 36px;
+}
+
+.passwordWrap {
+    position: relative;
+}
+
+.passwordInput {
+    padding-right: 56px;
+}
+
+.reveal {
+    position: absolute;
+    top: 50%;
+    right: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--text-soft);
+    transform: translateY(-50%);
+    transition: color var(--ease-color);
+}
+
+.reveal:hover {
+    color: var(--cocoa);
 }
 
 .textarea {

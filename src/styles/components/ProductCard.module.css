@@ -1,6 +1,7 @@
 .card {
     display: flex;
     flex-direction: column;
+    container-type: inline-size;
 }
 
 .media {
@@ -89,4 +90,22 @@
 .add:hover {
     background: var(--cocoa);
     color: var(--ivory);
+}
+
+/* Two-up grids on phones leave ~160px per card. */
+@container (max-width: 240px) {
+    .row {
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .name {
+        font-size: 20px;
+    }
+
+    .add {
+        gap: 6px;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+    }
 }

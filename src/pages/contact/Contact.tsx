@@ -1,117 +1,70 @@
-import { useState } from 'react';
-import { toast } from 'react-hot-toast';
-import { messageService } from '../../services/message.service';
-import classes from '../../styles/components/Contact.module.css';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Mail, MapPin } from 'lucide-react';
+import { productService } from '../../services/product.service';
 import { BRAND } from '../../constants/brand';
+import Breadcrumb from '../../components/layout/Breadcrumb';
+import ContactForm from '../../components/forms/ContactForm';
+import classes from '../../styles/components/Contact.module.css';
 
 const Contact = () => {
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        message: ''
-    });
-    const [errors, setErrors] = useState<{ [key: string]: string }>({});
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [thumbnail, setThumbnail] = useState<string>();
 
-    const validate = () => {
-        const newErrors: { [key: string]: string } = {};
-        if (!formData.name.trim()) newErrors.name = "Name is required";
-        if (!formData.email.trim()) newErrors.email = "Email is required";
-        else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email is invalid";
-        if (!formData.message.trim()) newErrors.message = "Message is required";
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!validate()) return;
-
-        setIsSubmitting(true);
-        try {
-            await messageService.sendMessage({
-                name: formData.name,
-                email: formData.email,
-                subject: 'Contact Form Message',
-                body: formData.message
-            });
-            toast.success("Message sent successfully!");
-            setFormData({ name: '', email: '', message: '' });
-        } catch (error) {
-            toast.error("Failed to send message. Please try again.");
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-        // Clear error when user types
-        if (errors[name]) {
-            setErrors(prev => ({ ...prev, [name]: '' }));
-        }
-    };
+    useEffect(() => {
+        productService.getAllProducts()
+            .then(products => setThumbnail(products[0]?.image))
+            .catch(error => console.error('Failed to fetch products:', error));
+    }, []);
 
     return (
-        <div className="container">
-            <div className={classes.wrapper}>
-                <div className={classes.info}>
-                    <h1>Get in <span>Touch</span></h1>
-                    <p>Have questions about our candles? We'd love to hear from you.</p>
+        <div className={classes.page}>
+            <div className="container">
+                <Breadcrumb current="Contact" />
 
-                    <div className={classes.detailItem}>
-                        <h3>Email</h3>
-                        <p><a href={`mailto:${BRAND.EMAIL}`}>{BRAND.EMAIL}</a></p>
+                <div className={classes.grid}>
+                    <div className={classes.info}>
+                        <p className="eyebrow">Get in touch</p>
+                        <h1 className={`display-1 ${classes.title}`}>
+                            We’d love to <em>hear from you</em>
+                        </h1>
+                        <p className="body-copy">
+                            Have questions about our candles, a custom order in mind, or simply want to say hello? Write to us — we read every message.
+                        </p>
+
+                        <dl className={classes.details}>
+                            <div className={classes.detail}>
+                                <Mail size={18} strokeWidth={1.5} className={classes.detailIcon} aria-hidden="true" />
+                                <div>
+                                    <dt className={classes.detailLabel}>Email</dt>
+                                    <dd><a href={`mailto:${BRAND.EMAIL}`} className={classes.email}>{BRAND.EMAIL}</a></dd>
+                                </div>
+                            </div>
+                            <div className={classes.detail}>
+                                <MapPin size={18} strokeWidth={1.5} className={classes.detailIcon} aria-hidden="true" />
+                                <div>
+                                    <dt className={classes.detailLabel}>Address</dt>
+                                    <dd className={classes.detailValue}>{BRAND.ADDRESS}</dd>
+                                </div>
+                            </div>
+                        </dl>
+
+                        <div className={classes.customPanel}>
+                            {thumbnail && <img src={thumbnail} alt="" className={classes.customImage} />}
+                            <div>
+                                <h2 className={classes.customTitle}>Custom orders &amp; bulk purchases</h2>
+                                <p className={classes.customText}>
+                                    Planning a celebration or gifting for many? Tell us about it in your message.
+                                </p>
+                            </div>
+                        </div>
+
+                        <p className={classes.faq}>
+                            Looking for a quick answer? <Link to="/faq" className="text-link">Visit our FAQ</Link>
+                        </p>
                     </div>
-                    <div className={classes.detailItem}>
-                        <h3>Address</h3>
-                        <p>{BRAND.ADDRESS}</p>
-                    </div>
+
+                    <ContactForm subjectFallback="Contact Form Message" variant="page" />
                 </div>
-
-                <form className={classes.form} onSubmit={handleSubmit}>
-                    <div className={classes.formGroup}>
-                        <label>Name <span style={{ color: 'red' }}>*</span></label>
-                        <input
-                            type="text"
-                            name="name"
-                            placeholder="Your Name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            style={errors.name ? { borderColor: 'red' } : {}}
-                        />
-                        {errors.name && <span style={{ color: 'red', fontSize: '0.8rem' }}>{errors.name}</span>}
-                    </div>
-                    <div className={classes.formGroup}>
-                        <label>Email <span style={{ color: 'red' }}>*</span></label>
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="Your Email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            style={errors.email ? { borderColor: 'red' } : {}}
-                        />
-                        {errors.email && <span style={{ color: 'red', fontSize: '0.8rem' }}>{errors.email}</span>}
-                    </div>
-                    <div className={classes.formGroup}>
-                        <label>Message <span style={{ color: 'red' }}>*</span></label>
-                        <textarea
-                            name="message"
-                            placeholder="How can we help?"
-                            rows={5}
-                            value={formData.message}
-                            onChange={handleChange}
-                            style={errors.message ? { borderColor: 'red' } : {}}
-                        ></textarea>
-                        {errors.message && <span style={{ color: 'red', fontSize: '0.8rem' }}>{errors.message}</span>}
-                    </div>
-                    <button className={classes.submitBtn} disabled={isSubmitting}>
-                        {isSubmitting ? 'Sending...' : 'Send Message'}
-                    </button>
-                </form>
             </div>
         </div>
     );

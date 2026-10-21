@@ -1,67 +1,138 @@
-/* FAQ.module.css */
+.page {
+    padding-bottom: var(--section-pad);
+}
 
-.wrapper {
-    max-width: 800px;
-    margin: 4rem auto;
+.grid {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    align-items: start;
+    gap: clamp(40px, 7vw, 128px);
+    margin-top: clamp(40px, 6vw, 72px);
 }
 
 .title {
-    text-align: center;
-    margin-bottom: 3rem;
-    font-family: var(--font-display);
-    font-size: 3rem;
-    color: var(--text-primary);
+    margin: 20px 0 28px;
 }
 
-.title span {
-    color: #D4A017;
+.help {
+    margin-top: 44px;
 }
 
-.faqList {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+@media (min-width: 1000px) {
+    .aside {
+        position: sticky;
+        top: 108px;
+    }
 }
 
-.faqItem {
-    border: none;
-    border-radius: 8px;
-    overflow: hidden;
-    background: white;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-    transition: box-shadow 0.3s;
-}
-
-.faqItem:hover {
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-}
-
-.questionBtn {
+/* Accordion */
+.listHead {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 16px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+}
+
+.count {
+    font-size: 14px;
+    color: var(--text-soft);
+}
+
+.item {
+    border-bottom: 1px solid var(--border);
+}
+
+.question {
+    font: inherit;
+}
+
+.trigger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
     width: 100%;
-    padding: 1.5rem 2rem;
+    padding: 28px 0;
     border: none;
     background: none;
     text-align: left;
-    font-size: 1.1rem;
+    font-family: var(--font-display);
+    font-size: clamp(22px, 2.2vw, 28px);
     font-weight: 500;
-    color: var(--text-primary);
-    cursor: pointer;
-}
-
-.questionBtn:hover {
-    color: #D4A017;
+    line-height: 1.25;
+    color: var(--cocoa);
 }
 
 .icon {
-    color: #D4A017;
-    transition: transform 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    color: var(--cocoa);
+    transition: background-color var(--ease-color), border-color var(--ease-color), color var(--ease-color);
+}
+
+.icon svg {
+    transition: transform 0.35s ease;
+}
+
+.trigger:hover .icon {
+    border-color: var(--cocoa);
+}
+
+.open .icon {
+    background: var(--cocoa);
+    border-color: var(--cocoa);
+    color: var(--ivory);
+}
+
+/* Rotating the plus 45° turns it into the × close icon. */
+.open .icon svg {
+    transform: rotate(45deg);
+}
+
+/* Grid-row trick animates to the content's natural height. */
+.panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s ease;
+}
+
+.open .panel {
+    grid-template-rows: 1fr;
+}
+
+.panelInner {
+    overflow: hidden;
+    visibility: hidden;
+    transition: visibility 0s linear 0.35s;
+}
+
+.open .panelInner {
+    visibility: visible;
+    transition-delay: 0s;
 }
 
 .answer {
-    padding: 0 2rem 2rem;
-    color: var(--text-secondary);
+    max-width: 640px;
+    padding: 0 64px 32px 0;
+    font-size: 16.5px;
     line-height: 1.8;
+    color: var(--text-muted);
+}
+
+@media (max-width: 899px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .answer {
+        padding-right: 0;
+    }
 }

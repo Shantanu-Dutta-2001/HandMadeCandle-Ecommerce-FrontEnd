@@ -1,0 +1,38 @@
+.breadcrumb {
+    padding-top: 32px;
+    font-size: 13px;
+    color: var(--text-soft);
+}
+
+.breadcrumb ol {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.breadcrumb li {
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumb li + li::before {
+    content: '/';
+    margin-right: 10px;
+    color: var(--border);
+}
+
+.breadcrumb a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    transition: color var(--ease-color);
+}
+
+.breadcrumb a:hover {
+    color: var(--cocoa);
+}
+
+.breadcrumb [aria-current='page'] {
+    color: var(--cocoa);
+}

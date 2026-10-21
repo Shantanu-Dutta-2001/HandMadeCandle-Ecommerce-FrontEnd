@@ -1,9 +1,10 @@
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, Search, ShoppingBag, User, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { BRAND } from '../../constants/brand';
+import { AUTH_ROUTES } from '../../constants/routes';
 import CartDrawer from '../shop/CartDrawer';
 import classes from './Navbar.module.css';
 
@@ -24,6 +25,8 @@ const Navbar = () => {
     const { logout, isAuthenticated } = useAuth();
     const { itemCount } = useCart();
     const navigate = useNavigate();
+    const { pathname } = useLocation();
+    const isAuthPage = AUTH_ROUTES.includes(pathname);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isCartOpen, setIsCartOpen] = useState(false);
 
@@ -69,7 +72,7 @@ const Navbar = () => {
                                 Log out
                             </button>
                         </>
-                    ) : (
+                    ) : !isAuthPage && (
                         <>
                             <Link to="/login" className={`${classes.textAction} ${classes.desktopOnly}`}>Log in</Link>
                             <Link to="/register" className={`${classes.signUp} ${classes.desktopOnly}`}>Sign up</Link>

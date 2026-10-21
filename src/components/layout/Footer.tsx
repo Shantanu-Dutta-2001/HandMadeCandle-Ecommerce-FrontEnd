@@ -39,16 +39,16 @@ const FooterColumn = ({ title, links }: FooterColumnProps) => (
 
 const Footer = () => (
     <footer className={classes.footer}>
-        <div className={`container ${classes.grid}`}>
-            <div className={classes.brand}>
-                <p className={classes.wordmark}>{BRAND.NAME}</p>
-                <p className={classes.tagline}>{BRAND.TAGLINE}</p>
-                <p className={classes.blurb}>Handcrafted candles, hand-poured at home.</p>
-            </div>
-            <FooterColumn title="Explore" links={EXPLORE_LINKS} />
-            <FooterColumn title="Support" links={SUPPORT_LINKS} />
-        </div>
         <div className="container">
+            <div className={classes.grid}>
+                <div className={classes.brand}>
+                    <p className={classes.wordmark}>{BRAND.NAME}</p>
+                    <p className={classes.tagline}>{BRAND.TAGLINE}</p>
+                    <p className={classes.blurb}>Handcrafted candles, hand-poured at home.</p>
+                </div>
+                <FooterColumn title="Explore" links={EXPLORE_LINKS} />
+                <FooterColumn title="Support" links={SUPPORT_LINKS} />
+            </div>
             <div className={classes.bottom}>
                 <p>© {new Date().getFullYear()} {BRAND.NAME}. All rights reserved.</p>
                 <p>Made by hand, with love.</p>

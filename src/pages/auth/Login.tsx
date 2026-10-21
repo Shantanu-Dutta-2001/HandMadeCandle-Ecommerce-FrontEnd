@@ -1,82 +1,56 @@
-import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
-import classes from '../../styles/components/Auth.module.css';
+import { BRAND } from '../../constants/brand';
+import { isValidEmail } from '../../utils/validation';
+import AuthLayout from '../../components/auth/AuthLayout';
+import { useAuthForm } from '../../components/auth/useAuthForm';
+import FormField from '../../components/forms/FormField';
+import PasswordInput from '../../components/forms/PasswordInput';
+import formClasses from '../../styles/components/Form.module.css';
+
+type Field = 'email' | 'password';
+
+const validate = (values: Record<Field, string>) => {
+    const errors: Partial<Record<Field, string>> = {};
+    if (!values.email.trim()) errors.email = 'Email is required';
+    else if (!isValidEmail(values.email)) errors.email = 'Email is invalid';
+    if (!values.password) errors.password = 'Password is required';
+    return errors;
+};
 
 const Login = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
-        try {
-            const user = await login(email, password);
-            if (user.role === 'Admin') {
-                navigate('/admin');
-            } else {
-                navigate('/dashboard');
-            }
-        } catch (error) {
-            console.error('Login failed', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const { fieldId, fieldProps, errors, formError, loading, handleSubmit } = useAuthForm<Field>(
+        { email: '', password: '' },
+        validate,
+        async values => {
+            const user = await login(values.email, values.password);
+            navigate(user.role === 'Admin' ? '/admin' : '/dashboard');
+        },
+        'We couldn’t log you in. Please check your email and password.',
+    );
 
     return (
-        <div className={classes.authPage}>
-            <div className={classes.authContainer}>
-                {/* Tabs */}
-                <div className={classes.tabs}>
-                    <Link to="/login" className={`${classes.tab} ${classes.activeTab}`}>Login</Link>
-                    <Link to="/register" className={classes.tab}>Register</Link>
-                </div>
-
-                {/* Card */}
-                <div className={classes.authCard}>
-                    <h2>Login to your account</h2>
-                    <p className={classes.subtitle}>Enter your credentials to access your account</p>
-
-                    <form onSubmit={handleSubmit}>
-                        <div className={classes.formGroup}>
-                            <label htmlFor="email">Email</label>
-                            <input
-                                type="email"
-                                id="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                                placeholder="your@email.com"
-                            />
-                        </div>
-
-                        <div className={classes.formGroup}>
-                            <label htmlFor="password">Password</label>
-                            <input
-                                type="password"
-                                id="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                placeholder="••••••••"
-                            />
-                        </div>
-
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className={classes.submitBtn}
-                        >
-                            {loading ? 'Logging in...' : 'Login'}
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
+        <AuthLayout
+            eyebrow="Welcome back"
+            title={<>Log in to your <em>account</em></>}
+            subtitle="Enter your details to access your account."
+            footer={<>New to {BRAND.NAME}? <Link to="/register" className="text-link">Create an account</Link></>}
+        >
+            <form className={`${formClasses.form} ${formClasses.authForm}`} onSubmit={handleSubmit} noValidate>
+                {formError && <p className={formClasses.summary} role="alert">{formError}</p>}
+                <FormField id={fieldId('email')} label="Email" error={errors.email}>
+                    <input type="email" autoComplete="email" placeholder="you@example.com" className={formClasses.input} {...fieldProps('email')} />
+                </FormField>
+                <FormField id={fieldId('password')} label="Password" error={errors.password}>
+                    <PasswordInput autoComplete="current-password" placeholder="Your password" {...fieldProps('password')} />
+                </FormField>
+                <button type="submit" className={`pill-btn pill-btn-primary ${formClasses.submit}`} disabled={loading}>
+                    {loading ? 'Logging in…' : 'Log in'}
+                </button>
+            </form>
+        </AuthLayout>
     );
 };
 
